@@ -21,7 +21,7 @@ const initialMessages: Message[] = [
   {
     id: '1',
     role: 'ai',
-    content: "Welcome to Dr. Second Opinion. I'm here to provide an AI-powered analysis of your medical questions and documents. How can I help you today?",
+    content: "欢迎来到AI医生。我在这里为您提供有关医疗问题和文件的AI支持分析。今天我能为您做些什么？",
   },
 ];
 
