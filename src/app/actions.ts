@@ -30,7 +30,7 @@ export async function submitQuery(formData: FormData) {
   
   const { question, documents, history, model } = parsed.data;
 
-  if (!question && documents.length === 0) {
+  if (!question.trim() && documents.length === 0) {
     return { error: 'Please enter a question or upload a document.' };
   }
   

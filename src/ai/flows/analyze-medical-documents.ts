@@ -39,7 +39,7 @@ const analyzeMedicalDocumentsPrompt = ai.definePrompt({
   name: 'analyzeMedicalDocumentsPrompt',
   input: {schema: AnalyzeMedicalDocumentsInputSchema},
   output: {schema: AnalyzeMedicalDocumentsOutputSchema},
-  prompt: `You are an experienced doctor. Analyze the following medical documents and images to answer the user's question directly. Provide a clear and concise answer in layman's terms.
+  prompt: `You are an experienced doctor. Answer the user's medical question. If medical documents or images are provided, analyze them to answer the user's question. Provide a clear and concise answer in layman's terms.
 ALWAYS express compassion and sympathy towards users.
 Respond in the language the user is using. When you mention a medical term, provide the English translation in parenthesis. For example, if the user asks in Chinese, you would say: "中风 (Stroke)".
 
@@ -52,10 +52,12 @@ Chat History:
 This is the beginning of the conversation.
 {{/if}}
 
+{{#if documents}}
 Medical Documents:
 {{#each documents}}
   {{{media url=this}}}
 {{/each}}
+{{/if}}
 
 User Question: {{{question}}}
 

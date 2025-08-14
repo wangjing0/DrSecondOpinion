@@ -107,7 +107,6 @@ export default function ChatLayout() {
 
     setIsLoading(true);
     
-    // Keep a snapshot of the history before the new message
     const historyForBackend = [...messages];
 
     try {
