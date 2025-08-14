@@ -29,7 +29,7 @@ const examplePrompts = [
   '失眠怎么办？',
   '给我制定一个生酮饮食计划',
   '帮我看看CT片子',
-  'How can I lower my cholesterol?',
+  '中风有什么症状',
 ];
 
 
