@@ -82,7 +82,7 @@ export default function ChatLayout() {
         });
         setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', content: "I'm sorry, I couldn't process that. " + result.error }]);
       } else {
-        const aiMessage: Message = { id: Date.now().toString(), role: 'ai', content: result.answer + (result.reasoning ? `\n\n**Reasoning:**\n${result.reasoning}`: '') };
+        const aiMessage: Message = { id: Date.now().toString(), role: 'ai', content: result.answer || '' };
         setMessages(prev => [...prev, aiMessage]);
       }
     } catch (error) {

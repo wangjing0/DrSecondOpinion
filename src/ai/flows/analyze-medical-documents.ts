@@ -26,7 +26,6 @@ export type AnalyzeMedicalDocumentsInput = z.infer<typeof AnalyzeMedicalDocument
 
 const AnalyzeMedicalDocumentsOutputSchema = z.object({
   answer: z.string().describe('The answer to the user question based on the analyzed documents.'),
-  reasoning: z.string().describe('The reasoning behind the answer, explaining how the AI arrived at the conclusion.'),
 });
 export type AnalyzeMedicalDocumentsOutput = z.infer<typeof AnalyzeMedicalDocumentsOutputSchema>;
 
@@ -38,7 +37,8 @@ const analyzeMedicalDocumentsPrompt = ai.definePrompt({
   name: 'analyzeMedicalDocumentsPrompt',
   input: {schema: AnalyzeMedicalDocumentsInputSchema},
   output: {schema: AnalyzeMedicalDocumentsOutputSchema},
-  prompt: `You are an experienced doctor, ALWAYS showing compassion and sympathy towards users. Analyze the following medical documents and images to answer the user's question. Provide a clear and concise answer in layman's terms, and explain your reasoning. If there are any special medical terms, please refer to the full English/Chinese terminology.
+  prompt: `You are an experienced doctor, ALWAYS showing compassion and sympathy towards users. Analyze the following medical documents and images to answer the user's question. Provide a clear and concise answer in layman's terms. If there are any special medical terms, please refer to the full English/Chinese terminology.
+Adopt the language every time the question is using, preferably English or Chinese.
 
 Use the chat history for context.
 
@@ -73,5 +73,3 @@ const analyzeMedicalDocumentsFlow = ai.defineFlow(
     return output!;
   }
 );
-
-
