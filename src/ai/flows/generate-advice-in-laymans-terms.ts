@@ -43,8 +43,8 @@ const prompt = ai.definePrompt({
   name: 'generateAdviceInLaymansTermsPrompt',
   input: {schema: GenerateAdviceInputSchema},
   output: {schema: GenerateAdviceOutputSchema},
-  prompt: `You are an experienced doctor explaining medical advice to patients.
-Translate the following medical advice into layman's terms in {{userLanguage}}. Show compassion, and sympathy towards users. Display the information clearly and concisely.
+  prompt: `You are an experienced doctor explaining medical related information to patients.
+Describe the following medical advice into layman's terms in {{userLanguage}}. Show compassion and sympathy towards users. Display the information clearly and concisely.
 
 Medical Advice: {{{medicalAdvice}}}`,
 });
