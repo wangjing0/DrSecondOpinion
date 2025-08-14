@@ -23,6 +23,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Set worker source
+if (typeof window !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.mjs`;
+}
 
 
 const initialMessages: Message[] = [
@@ -57,6 +63,35 @@ export default function ChatLayout() {
     setMessages(initialMessages);
   };
 
+  const convertPdfToImages = async (file: File): Promise<Attachment[]> => {
+    const images: Attachment[] = [];
+    const fileBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument(fileBuffer).promise;
+    const numPages = pdf.numPages;
+  
+    for (let i = 1; i <= numPages; i++) {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 1.5 });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+  
+      if (context) {
+        await page.render({ canvasContext: context, viewport: viewport }).promise;
+        const imageDataUrl = canvas.toDataURL('image/jpeg');
+        images.push({
+          name: `${file.name}-page-${i}.jpg`,
+          type: 'image/jpeg',
+          size: 0, // Size is not easily available here
+          data: imageDataUrl,
+        });
+      }
+    }
+    return images;
+  };
+
+
   const handleSendMessage = async (text: string, files: File[] = []) => {
     if (isLoading) return;
     if (!text && files.length === 0) {
@@ -72,24 +107,35 @@ export default function ChatLayout() {
 
     const userMessageContent = text;
     const currentMessages = [...messages];
+    
+    // Create a temporary user message to show in the UI immediately
+    const tempUserMessageAttachments = files.map(f => ({ name: f.name, type: f.type, size: f.size, data: ''}))
+    const userMessage: Message = { id: Date.now().toString(), role: 'user', content: userMessageContent, attachments: tempUserMessageAttachments };
+    setMessages(prev => [...prev, userMessage]);
+
 
     try {
-      const fileDataPromises = files.map(file => {
-        return new Promise<Attachment>((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = e => resolve({ name: file.name, type: file.type, size: file.size, data: e.target?.result as string });
-          reader.onerror = reject;
-          reader.readAsDataURL(file);
-        });
+      const attachmentPromises: Promise<Attachment | Attachment[]>[] = files.map(file => {
+        if (file.type === 'application/pdf') {
+          return convertPdfToImages(file);
+        } else {
+          return new Promise<Attachment>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = e => resolve({ name: file.name, type: file.type, size: file.size, data: e.target?.result as string });
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        }
       });
-
-      const attachments = await Promise.all(fileDataPromises);
-      const userMessage: Message = { id: Date.now().toString(), role: 'user', content: userMessageContent, attachments };
-      setMessages(prev => [...prev, userMessage]);
+      
+      const processedAttachments = (await Promise.all(attachmentPromises)).flat();
+      
+      // Update the user message with the actual (processed) attachments. This won't re-render if keys are stable.
+      // But we will update the message list later anyway.
 
       const formData = new FormData();
       formData.append('question', userMessageContent);
-      attachments.forEach(attachment => {
+      processedAttachments.forEach(attachment => {
         formData.append('documents', attachment.data);
       });
       formData.append('history', JSON.stringify(currentMessages));
@@ -110,7 +156,8 @@ export default function ChatLayout() {
         setMessages(prev => [...prev, aiMessage]);
       }
     } catch (error) {
-      const errorMessage = 'An unexpected error occurred. Please try again.';
+      console.error("Error processing files:", error);
+      const errorMessage = 'An unexpected error occurred while processing files. Please try again.';
       toast({
         title: 'Error',
         description: errorMessage,
