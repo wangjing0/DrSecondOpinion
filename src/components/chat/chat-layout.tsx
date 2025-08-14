@@ -122,13 +122,14 @@ export default function ChatLayout() {
                 });
             }
         });
+        
         const processedAttachments = (await Promise.all(attachmentPromises)).flat();
 
         const userMessage: Message = {
             id: Date.now().toString(),
             role: 'user',
             content: text,
-            attachments: processedAttachments.map(({ data, ...rest }) => rest), // Don't store full data URI in history
+            attachments: processedAttachments.map(({ data, ...rest }) => rest),
         };
 
         setMessages(prev => [...prev, userMessage]);
