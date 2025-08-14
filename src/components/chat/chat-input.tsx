@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useRef } from 'react';
@@ -79,7 +80,7 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
           onChange={handleFileChange}
           className="hidden"
           multiple
-          accept="image/*,application/pdf,.doc,.docx"
+          accept="application/pdf,image/jpeg,image/png,text/plain,text/markdown,.pdf,.jpeg,.jpg,.png,.txt,.md"
         />
         <div className="flex flex-col gap-2">
           <Button 
