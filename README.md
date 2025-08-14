@@ -1,4 +1,5 @@
-# DrSecondOpinion App
+# DrSecondOpinion
+[APP Demo](https://studio--drsecondopinion.us-central1.hosted.app/)
 
 This project is a DrSecondOpinion app built with NextJS. It provides users with the ability to upload and analyze medical documents, and interact with an AI assistant to ask questions and receive information related to their documents.
 
