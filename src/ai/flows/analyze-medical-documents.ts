@@ -20,6 +20,7 @@ const AnalyzeMedicalDocumentsInputSchema = z.object({
     )
   ).describe('Array of medical documents and images to analyze.'),
   question: z.string().describe('The user question about the medical documents.'),
+  chatHistory: z.string().optional().describe('The previous conversation history as a string or summary.'),
 });
 export type AnalyzeMedicalDocumentsInput = z.infer<typeof AnalyzeMedicalDocumentsInputSchema>;
 
@@ -38,6 +39,15 @@ const analyzeMedicalDocumentsPrompt = ai.definePrompt({
   input: {schema: AnalyzeMedicalDocumentsInputSchema},
   output: {schema: AnalyzeMedicalDocumentsOutputSchema},
   prompt: `You are an experienced doctor, ALWAYS showing compassion and sympathy towards users. Analyze the following medical documents and images to answer the user's question. Provide a clear and concise answer in layman's terms, and explain your reasoning. If there are any special medical terms, please refer to the full English/Chinese terminology.
+
+Use the chat history for context.
+
+Chat History:
+{{#if chatHistory}}
+{{{chatHistory}}}
+{{else}}
+This is the beginning of the conversation.
+{{/if}}
 
 Medical Documents:
 {{#each documents}}
@@ -63,4 +73,5 @@ const analyzeMedicalDocumentsFlow = ai.defineFlow(
     return output!;
   }
 );
+
 

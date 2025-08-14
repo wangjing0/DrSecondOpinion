@@ -47,6 +47,9 @@ export default function ChatLayout() {
 
     setIsLoading(true);
 
+    const userMessageContent = text;
+    const currentMessages = [...messages];
+
     try {
       const fileDataPromises = files.map(file => {
         return new Promise<Attachment>((resolve, reject) => {
@@ -58,14 +61,16 @@ export default function ChatLayout() {
       });
 
       const attachments = await Promise.all(fileDataPromises);
-      const userMessage: Message = { id: Date.now().toString(), role: 'user', content: text, attachments };
+      const userMessage: Message = { id: Date.now().toString(), role: 'user', content: userMessageContent, attachments };
       setMessages(prev => [...prev, userMessage]);
 
       const formData = new FormData();
-      formData.append('question', text);
+      formData.append('question', userMessageContent);
       attachments.forEach(attachment => {
         formData.append('documents', attachment.data);
       });
+      formData.append('history', JSON.stringify(currentMessages));
+
 
       const result = await submitQuery(formData);
 
