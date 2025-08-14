@@ -21,7 +21,7 @@ const initialMessages: Message[] = [
   {
     id: '1',
     role: 'ai',
-    content: "欢迎来到AI医生。我在这里为您提供有关医疗问题和文件的AI支持分析。今天我能为您做些什么？",
+    content: "欢迎来到医见。我在这里为您提供有关医疗问题和文件的AI支持分析。请问吧!",
   },
 ];
 
