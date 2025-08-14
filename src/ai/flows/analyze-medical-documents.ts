@@ -59,7 +59,7 @@ User Question: {{{question}}}
 
 Do not repeat the question or provide an elaborate introduction. Get straight to the point.
 
-Disclaimer: This AI advice is not a substitute for professional medical advice.
+Disclaimer: AI advice is not a substitute for medical consultation. Always consult with qualified professionals.
 `,
 });
 

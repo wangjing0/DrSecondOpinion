@@ -148,7 +148,7 @@ export default function ChatLayout() {
       <div className="p-4 border-t bg-background/80">
         <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
         <p className="text-xs text-muted-foreground text-center mt-2 px-2">
-          Disclaimer: This AI advice is not a substitute for professional medical consultation. Always consult with a qualified doctor.
+          AI advice is not a substitute for medical consultation. Always consult with qualified professionals.
         </p>
       </div>
     </Card>
