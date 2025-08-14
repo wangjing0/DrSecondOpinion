@@ -35,6 +35,7 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    if (isLoading || (!text.trim() && files.length === 0)) return;
     onSendMessage(text, files);
     setText('');
     setFiles([]);
@@ -68,8 +69,8 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
           onChange={e => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Ask a question or describe your concern..."
-          className="flex-1 resize-none"
-          rows={1}
+          className="flex-1"
+          rows={3}
           disabled={isLoading}
         />
         <input
