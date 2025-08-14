@@ -62,7 +62,7 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
             ))}
          </div>
        )}
-      <div className="flex items-start w-full gap-2">
+      <div className="flex items-end w-full gap-2">
         <Textarea
           value={text}
           onChange={e => setText(e.target.value)}
