@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useRef, useEffect } from 'react';
@@ -86,6 +87,9 @@ export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
                 <span className="text-sm text-muted-foreground">Dr. AI is thinking...</span>
             </div>
           </div>
+        )}
+         {messages.length === 1 && !isLoading && (
+          <div className='h-48' />
         )}
       </div>
       <div ref={messagesEndRef} />

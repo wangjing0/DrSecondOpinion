@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -126,10 +127,10 @@ export default function ChatLayout() {
           </Tooltip>
         </TooltipProvider>
       </header>
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden flex flex-col">
         <ChatMessages messages={messages} isLoading={isLoading} />
-        {messages.length === 1 && (
-            <div className="p-4 sm:p-6">
+        {messages.length === 1 && !isLoading && (
+            <div className="p-4 sm:p-6 mt-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {examplePrompts.map((prompt, index) => (
                     <Card 
