@@ -96,7 +96,7 @@ export default function ChatLayout() {
 
   const handleSendMessage = async (text: string, files: File[] = []) => {
     if (isLoading) return;
-    if (!text && files.length === 0) {
+    if (!text.trim() && files.length === 0) {
       toast({
         title: 'Input required',
         description: 'Please enter a question or upload a document.',
@@ -107,67 +107,73 @@ export default function ChatLayout() {
 
     setIsLoading(true);
 
-    const userMessageContent = text;
     const currentMessages = [...messages];
-    
-    // Create a temporary user message to show in the UI immediately
-    const tempUserMessageAttachments = files.map(f => ({ name: f.name, type: f.type, size: f.size, data: ''}))
-    const userMessage: Message = { id: Date.now().toString(), role: 'user', content: userMessageContent, attachments: tempUserMessageAttachments };
-    setMessages(prev => [...prev, userMessage]);
-
+    let userMessage: Message;
+    let processedAttachments: Attachment[] = [];
 
     try {
-      const attachmentPromises: Promise<Attachment | Attachment[]>[] = files.map(file => {
-        if (file.type === 'application/pdf') {
-          return convertPdfToImages(file);
-        } else {
-          return new Promise<Attachment>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = e => resolve({ name: file.name, type: file.type, size: file.size, data: e.target?.result as string });
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
+        if (files.length > 0) {
+            const attachmentPromises: Promise<Attachment | Attachment[]>[] = files.map(file => {
+                if (file.type === 'application/pdf') {
+                    return convertPdfToImages(file);
+                } else {
+                    return new Promise<Attachment>((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = e => resolve({ name: file.name, type: file.type, size: file.size, data: e.target?.result as string });
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+                }
+            });
+            processedAttachments = (await Promise.all(attachmentPromises)).flat();
         }
-      });
-      
-      const processedAttachments = (await Promise.all(attachmentPromises)).flat();
-      
-      // Update the user message with the actual (processed) attachments. This won't re-render if keys are stable.
-      // But we will update the message list later anyway.
 
-      const formData = new FormData();
-      formData.append('question', userMessageContent);
-      processedAttachments.forEach(attachment => {
-        formData.append('documents', attachment.data);
-      });
-      formData.append('history', JSON.stringify(currentMessages));
-      formData.append('model', selectedModel);
+        userMessage = {
+            id: Date.now().toString(),
+            role: 'user',
+            content: text,
+            attachments: processedAttachments.map(({ data, ...rest }) => rest), // Don't store full data URI in history
+        };
 
+        const thinkingMessage: Message = { id: (Date.now() + 1).toString(), role: 'ai', content: '...' }; // Placeholder for loading
+        setMessages(prev => [...prev, userMessage, thinkingMessage]);
 
-      const result = await submitQuery(formData);
-
-      if (result.error) {
-        toast({
-          title: 'An error occurred',
-          description: result.error,
-          variant: 'destructive',
+        const formData = new FormData();
+        formData.append('question', text);
+        processedAttachments.forEach(attachment => {
+            formData.append('documents', attachment.data);
         });
-        setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', content: "I'm sorry, I couldn't process that. " + result.error }]);
-      } else {
-        const aiMessage: Message = { id: Date.now().toString(), role: 'ai', content: result.answer || '' };
-        setMessages(prev => [...prev, aiMessage]);
-      }
+        formData.append('history', JSON.stringify(currentMessages));
+        formData.append('model', selectedModel);
+
+        const result = await submitQuery(formData);
+
+        if (result.error) {
+            const errorMessage: Message = { id: (Date.now() + 2).toString(), role: 'ai', content: "I'm sorry, I couldn't process that. " + result.error };
+            setMessages(prev => [...prev.slice(0, -1), errorMessage]);
+            toast({
+                title: 'An error occurred',
+                description: result.error,
+                variant: 'destructive',
+            });
+        } else {
+            const aiMessage: Message = { id: (Date.now() + 2).toString(), role: 'ai', content: result.answer || '' };
+            setMessages(prev => [...prev.slice(0, -1), aiMessage]);
+        }
+
     } catch (error) {
-      console.error("Error processing files:", error);
-      const errorMessage = 'An unexpected error occurred while processing files. Please try again.';
-      toast({
-        title: 'Error',
-        description: errorMessage,
-        variant: 'destructive',
-      });
-      setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', content: errorMessage }]);
+        console.error("Error processing files:", error);
+        const errorMessageContent = 'An unexpected error occurred while processing files. Please try again.';
+        const errorMessage: Message = { id: (Date.now() + 2).toString(), role: 'ai', content: errorMessageContent };
+        // Remove the user message and thinking message, and add an error message.
+        setMessages(prev => [...prev.slice(0, -2), errorMessage]);
+        toast({
+            title: 'Error',
+            description: errorMessageContent,
+            variant: 'destructive',
+        });
     } finally {
-      setIsLoading(false);
+        setIsLoading(false);
     }
   };
 
