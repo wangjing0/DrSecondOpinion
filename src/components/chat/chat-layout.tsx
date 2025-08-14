@@ -7,7 +7,6 @@ import { ChatMessages } from './chat-message';
 import { submitQuery } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Icons } from '@/components/icons';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
 import {
@@ -146,14 +145,10 @@ export default function ChatLayout() {
         )}
       </div>
       <div className="p-4 border-t bg-background/80">
-        <Alert className="mb-4 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800">
-          <Icons.AlertTriangle className="h-4 w-4 text-yellow-500" />
-          <AlertTitle className="font-semibold text-yellow-700 dark:text-yellow-300">Disclaimer</AlertTitle>
-          <AlertDescription className="text-yellow-600 dark:text-yellow-400">
-            This AI advice is not a substitute for professional medical consultation. Always consult with a qualified doctor.
-          </AlertDescription>
-        </Alert>
         <ChatInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+        <p className="text-xs text-muted-foreground text-center mt-2 px-2">
+          Disclaimer: This AI advice is not a substitute for professional medical consultation. Always consult with a qualified doctor.
+        </p>
       </div>
     </Card>
   );
