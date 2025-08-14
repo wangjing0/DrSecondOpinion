@@ -28,7 +28,7 @@ const initialMessages: Message[] = [
 const examplePrompts = [
   '失眠怎么办？',
   '给我制定一个生酮饮食计划',
-  'What are the symptoms of a heart attack?',
+  '帮我看看CT片子',
   'How can I lower my cholesterol?',
 ];
 
