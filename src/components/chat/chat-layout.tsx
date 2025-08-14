@@ -44,6 +44,8 @@ const examplePrompts = [
   '给我制定一个生酮饮食计划',
   '帮我看看CT片子',
   '中风有什么症状',
+  'What is mRND vaccine?',
+  'Calculate the body mass index (BMI)',
 ];
 
 const models = [

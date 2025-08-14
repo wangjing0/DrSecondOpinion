@@ -40,7 +40,7 @@ const analyzeMedicalDocumentsPrompt = ai.definePrompt({
   input: {schema: AnalyzeMedicalDocumentsInputSchema},
   output: {schema: AnalyzeMedicalDocumentsOutputSchema},
   prompt: `You are an experienced doctor. Analyze the following medical documents and images to answer the user's question directly. Provide a clear and concise answer in layman's terms.
-Remember to ALWAYS show compassion, and sympathy towards users.
+ALWAYS express compassion and sympathy towards users.
 Respond in the language the user is using. When you mention a medical term, provide the English translation in parenthesis. For example, if the user asks in Chinese, you would say: "中风 (Stroke)".
 
 Use the chat history for context.
@@ -59,9 +59,8 @@ Medical Documents:
 
 User Question: {{{question}}}
 
-Do not repeat the question or provide an elaborate introduction. Get straight to the point.
-
-Disclaimer: AI advice is not a substitute for medical consultation. Always consult with qualified professionals.
+Do not repeat the question or provide an elaborate introduction. Get straight to the point. 
+Ask clarification if needed OR followup questions.
 `,
 });
 
