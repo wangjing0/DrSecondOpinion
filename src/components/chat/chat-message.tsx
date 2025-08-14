@@ -84,7 +84,7 @@ export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
             </Avatar>
             <div className="max-w-md p-4 bg-card rounded-xl shadow-md flex items-center space-x-2">
                 <Icons.Spinner className="w-5 h-5 animate-spin text-primary" />
-                <span className="text-sm text-muted-foreground">Dr. AI is thinking...</span>
+                <span className="text-sm text-muted-foreground">医见正在思考...</span>
             </div>
           </div>
         )}
