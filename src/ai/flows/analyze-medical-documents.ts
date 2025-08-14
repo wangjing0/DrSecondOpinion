@@ -12,6 +12,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { googleAI } from '@genkit-ai/googleai';
 
 const AnalyzeMedicalDocumentsInputSchema = z.object({
   documents: z.array(
@@ -21,6 +22,7 @@ const AnalyzeMedicalDocumentsInputSchema = z.object({
   ).describe('Array of medical documents and images to analyze.'),
   question: z.string().describe('The user question about the medical documents.'),
   chatHistory: z.string().optional().describe('The previous conversation history as a string or summary.'),
+  model: z.string().optional().describe('The AI model to use for the analysis.'),
 });
 export type AnalyzeMedicalDocumentsInput = z.infer<typeof AnalyzeMedicalDocumentsInputSchema>;
 
@@ -70,7 +72,8 @@ const analyzeMedicalDocumentsFlow = ai.defineFlow(
     outputSchema: AnalyzeMedicalDocumentsOutputSchema,
   },
   async input => {
-    const {output} = await analyzeMedicalDocumentsPrompt(input);
+    const model = input.model ? googleAI.model(input.model) : undefined;
+    const {output} = await analyzeMedicalDocumentsPrompt(input, { model });
     return output!;
   }
 );

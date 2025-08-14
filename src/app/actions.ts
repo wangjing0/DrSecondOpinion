@@ -9,6 +9,7 @@ const formSchema = z.object({
   question: z.string(),
   documents: z.array(z.string()),
   history: z.string().optional(),
+  model: z.string().optional(),
 });
 
 // Arbitrary token limit for summarization
@@ -19,6 +20,7 @@ export async function submitQuery(formData: FormData) {
     question: formData.get('question') as string,
     documents: formData.getAll('documents') as string[],
     history: formData.get('history') as string,
+    model: formData.get('model') as string,
   };
 
   const parsed = formSchema.safeParse(rawData);
@@ -26,7 +28,7 @@ export async function submitQuery(formData: FormData) {
     return { error: 'Invalid input.' };
   }
   
-  const { question, documents, history } = parsed.data;
+  const { question, documents, history, model } = parsed.data;
 
   if (!question && documents.length === 0) {
     return { error: 'Please enter a question or upload a document.' };
@@ -59,6 +61,7 @@ export async function submitQuery(formData: FormData) {
       question: question,
       documents: documents,
       chatHistory: chatHistoryString,
+      model: model,
     });
     return { ...result };
   } catch (e) {

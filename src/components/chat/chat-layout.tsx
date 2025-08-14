@@ -16,6 +16,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 
 const initialMessages: Message[] = [
   {
@@ -32,10 +40,17 @@ const examplePrompts = [
   '中风有什么症状',
 ];
 
+const models = [
+    { value: "gemini-2.0-flash", label: "Gemini 2.0 Flash (Fastest)" },
+    { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash (Good)" },
+    { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro (Best)" },
+]
+
 
 export default function ChatLayout() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash");
   const { toast } = useToast();
 
   const handleNewSession = () => {
@@ -78,6 +93,7 @@ export default function ChatLayout() {
         formData.append('documents', attachment.data);
       });
       formData.append('history', JSON.stringify(currentMessages));
+      formData.append('model', selectedModel);
 
 
       const result = await submitQuery(formData);
@@ -113,19 +129,31 @@ export default function ChatLayout() {
           <Icons.Stethoscope className="w-8 h-8 mr-3 text-primary" />
           <h1 className="text-2xl font-bold font-headline">Dr. Second Opinion</h1>
         </div>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" onClick={handleNewSession} disabled={isLoading}>
-                <Icons.Eraser className="w-5 h-5" />
-                <span className="sr-only">New Session</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>New Session</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className="flex items-center gap-2">
+            <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
+                <SelectTrigger className="w-[240px] text-xs">
+                    <SelectValue placeholder="Select a model" />
+                </SelectTrigger>
+                <SelectContent>
+                    {models.map(model => (
+                        <SelectItem key={model.value} value={model.value}>{model.label}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={handleNewSession} disabled={isLoading}>
+                    <Icons.Eraser className="w-5 h-5" />
+                    <span className="sr-only">New Session</span>
+                </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                <p>New Session</p>
+                </TooltipContent>
+            </Tooltip>
+            </TooltipProvider>
+        </div>
       </header>
       <div className="flex-1 overflow-hidden flex flex-col">
         <ChatMessages messages={messages} isLoading={isLoading} />
