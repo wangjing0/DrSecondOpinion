@@ -7,7 +7,7 @@
  * - AiPoweredFollowUpQuestionsOutput - The return type for the aiPoweredFollowUpQuestions function.
  */
 
-import {ai} from '@/ai/genkit';
+import {ai, google_search} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const AiPoweredFollowUpQuestionsInputSchema = z.object({
@@ -54,6 +54,16 @@ const aiPoweredFollowUpQuestionsFlow = ai.defineFlow(
     outputSchema: AiPoweredFollowUpQuestionsOutputSchema,
   },
   async input => {
+    // Check if the input is uncertain or requires external information
+    // This is a placeholder for a more sophisticated check
+    let searchResults = '';
+    if (input.userQuestion.includes('uncertain') || input.userQuestion.includes('unknown')) {
+      console.log('Invoking google_search tool...');
+      const search = await google_search.search({queries: [{text: input.userQuestion}]});
+      searchResults = search.results.map(result => result.text).join('\n');
+      console.log('google_search tool invoked.');
+    }
+
     const {output} = await prompt(input);
     return output!;
   }

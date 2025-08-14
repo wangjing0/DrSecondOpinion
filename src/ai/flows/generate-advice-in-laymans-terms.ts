@@ -10,7 +10,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {google_search, z} from 'genkit';
 
 const GenerateAdviceInputSchema = z.object({
   medicalAdvice: z
@@ -43,7 +43,7 @@ const prompt = ai.definePrompt({
   name: 'generateAdviceInLaymansTermsPrompt',
   input: {schema: GenerateAdviceInputSchema},
   output: {schema: GenerateAdviceOutputSchema},
-  prompt: `You are an experienced doctor explaining medical related information to patients.
+  prompt: `You are an experienced doctor explaining medical related information to patients. Use the provided search results to help you explain the medical advice.
 Describe the following medical advice into layman's terms in {{userLanguage}}. Show compassion and sympathy towards users. Display the information clearly and concisely.
 
 Medical Advice: {{{medicalAdvice}}}`,
@@ -56,7 +56,12 @@ const generateAdviceInLaymansTermsFlow = ai.defineFlow(
     outputSchema: GenerateAdviceOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    // Use google_search to find information about medical terms in the advice
+    const searchResults = await google_search.search({
+      q: `define medical terms in: ${input.medicalAdvice}`,
+    });
+
+    const {output} = await prompt({...input, context: searchResults});
     return output!;
   }
 );
