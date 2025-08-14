@@ -108,35 +108,30 @@ export default function ChatLayout() {
     setIsLoading(true);
 
     const currentMessages = [...messages];
-    let userMessage: Message;
-    let processedAttachments: Attachment[] = [];
-
+    
     try {
-        if (files.length > 0) {
-            const attachmentPromises: Promise<Attachment | Attachment[]>[] = files.map(file => {
-                if (file.type === 'application/pdf') {
-                    return convertPdfToImages(file);
-                } else {
-                    return new Promise<Attachment>((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = e => resolve({ name: file.name, type: file.type, size: file.size, data: e.target?.result as string });
-                        reader.onerror = reject;
-                        reader.readAsDataURL(file);
-                    });
-                }
-            });
-            processedAttachments = (await Promise.all(attachmentPromises)).flat();
-        }
+        const attachmentPromises: Promise<Attachment | Attachment[]>[] = files.map(file => {
+            if (file.type === 'application/pdf') {
+                return convertPdfToImages(file);
+            } else {
+                return new Promise<Attachment>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve({ name: file.name, type: file.type, size: file.size, data: e.target?.result as string });
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+        const processedAttachments = (await Promise.all(attachmentPromises)).flat();
 
-        userMessage = {
+        const userMessage: Message = {
             id: Date.now().toString(),
             role: 'user',
             content: text,
             attachments: processedAttachments.map(({ data, ...rest }) => rest), // Don't store full data URI in history
         };
 
-        const thinkingMessage: Message = { id: (Date.now() + 1).toString(), role: 'ai', content: '...' }; // Placeholder for loading
-        setMessages(prev => [...prev, userMessage, thinkingMessage]);
+        setMessages(prev => [...prev, userMessage]);
 
         const formData = new FormData();
         formData.append('question', text);
@@ -150,7 +145,7 @@ export default function ChatLayout() {
 
         if (result.error) {
             const errorMessage: Message = { id: (Date.now() + 2).toString(), role: 'ai', content: "I'm sorry, I couldn't process that. " + result.error };
-            setMessages(prev => [...prev.slice(0, -1), errorMessage]);
+            setMessages(prev => [...prev, errorMessage]);
             toast({
                 title: 'An error occurred',
                 description: result.error,
@@ -158,15 +153,15 @@ export default function ChatLayout() {
             });
         } else {
             const aiMessage: Message = { id: (Date.now() + 2).toString(), role: 'ai', content: result.answer || '' };
-            setMessages(prev => [...prev.slice(0, -1), aiMessage]);
+            setMessages(prev => [...prev, aiMessage]);
         }
 
     } catch (error) {
         console.error("Error processing files:", error);
         const errorMessageContent = 'An unexpected error occurred while processing files. Please try again.';
         const errorMessage: Message = { id: (Date.now() + 2).toString(), role: 'ai', content: errorMessageContent };
-        // Remove the user message and thinking message, and add an error message.
-        setMessages(prev => [...prev.slice(0, -2), errorMessage]);
+        // Remove the user message and add an error message.
+        setMessages(prev => [...prev.slice(0, -1), errorMessage]);
         toast({
             title: 'Error',
             description: errorMessageContent,
