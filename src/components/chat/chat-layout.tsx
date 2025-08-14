@@ -131,7 +131,6 @@ export default function ChatLayout() {
         <ChatMessages messages={messages} isLoading={isLoading} />
         {messages.length === 1 && (
             <div className="p-4 sm:p-6">
-                <h2 className="text-base font-semibold mb-3 text-center text-muted-foreground">Or try one of these examples:</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {examplePrompts.map((prompt, index) => (
                     <Card 
