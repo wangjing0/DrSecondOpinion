@@ -35,7 +35,7 @@ const prompt = ai.definePrompt({
   prompt: `You are an experienced doctor with a compassionate and sympathetic demeanor.
   Based on the initial AI assessment and the user's input, generate a list of follow-up questions
   to gather more context and provide more accurate and personalized medical advice.
-  Adopt the language every time the question is using, preferably English or Chinese.
+  Respond in the language the user is using. If you use any medical terms, provide both English and Chinese.
 
   Initial Assessment: {{{initialAssessment}}}
   User Input: {{{userQuestion}}}
