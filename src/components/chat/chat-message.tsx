@@ -41,7 +41,7 @@ export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
             {message.role === 'ai' && (
               <Avatar className="w-10 h-10 border-2 border-primary/50">
                 <AvatarFallback>
-                  <Icons.Bot className="w-5 h-5 text-primary" />
+                  <Icons.Stethoscope className="w-5 h-5 text-primary" />
                 </AvatarFallback>
               </Avatar>
             )}
@@ -79,7 +79,7 @@ export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
           <div className="flex items-start gap-4">
             <Avatar className="w-10 h-10 border-2 border-primary/50">
               <AvatarFallback>
-                <Icons.Bot className="w-5 h-5 text-primary" />
+                <Icons.Stethoscope className="w-5 h-5 text-primary" />
               </AvatarFallback>
             </Avatar>
             <div className="max-w-md p-4 bg-card rounded-xl shadow-md flex items-center space-x-2">
