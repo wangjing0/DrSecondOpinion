@@ -25,6 +25,14 @@ const initialMessages: Message[] = [
   },
 ];
 
+const examplePrompts = [
+  '失眠怎么办？',
+  '给我制定一个生酮饮食计划',
+  'What are the symptoms of a heart attack?',
+  'How can I lower my cholesterol?',
+];
+
+
 export default function ChatLayout() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +42,7 @@ export default function ChatLayout() {
     setMessages(initialMessages);
   };
 
-  const handleSendMessage = async (text: string, files: File[]) => {
+  const handleSendMessage = async (text: string, files: File[] = []) => {
     if (isLoading) return;
     if (!text && files.length === 0) {
       toast({
@@ -121,6 +129,22 @@ export default function ChatLayout() {
       </header>
       <div className="flex-1 overflow-hidden">
         <ChatMessages messages={messages} isLoading={isLoading} />
+        {messages.length === 1 && (
+            <div className="p-4 sm:p-6">
+                <h2 className="text-base font-semibold mb-3 text-center text-muted-foreground">Or try one of these examples:</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {examplePrompts.map((prompt, index) => (
+                    <Card 
+                        key={index}
+                        className="p-4 hover:bg-muted cursor-pointer transition-colors"
+                        onClick={() => handleSendMessage(prompt)}
+                    >
+                        <p className="font-medium text-sm text-center">{prompt}</p>
+                    </Card>
+                    ))}
+                </div>
+            </div>
+        )}
       </div>
       <div className="p-4 border-t bg-background/80">
         <Alert className="mb-4 bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800">
