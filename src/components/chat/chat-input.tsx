@@ -62,7 +62,7 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
             ))}
          </div>
        )}
-      <div className="flex items-center w-full gap-2">
+      <div className="flex items-start w-full gap-2">
         <Textarea
           value={text}
           onChange={e => setText(e.target.value)}
@@ -80,23 +80,25 @@ export function ChatInput({ onSendMessage, isLoading }: ChatInputProps) {
           multiple
           accept="image/*,application/pdf,.doc,.docx"
         />
-        <Button 
-          type="button" 
-          variant="outline"
-          size="icon" 
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isLoading}
-          aria-label="Upload file"
-        >
-          <Icons.Paperclip className="w-5 h-5" />
-        </Button>
-        <Button type="submit" size="icon" disabled={isLoading} aria-label="Send message" className="bg-accent hover:bg-accent/90">
-          {isLoading ? (
-            <Icons.Spinner className="w-5 h-5 animate-spin" />
-          ) : (
-            <Icons.Send className="w-5 h-5" />
-          )}
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button 
+            type="button" 
+            variant="outline"
+            size="icon" 
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading}
+            aria-label="Upload file"
+          >
+            <Icons.Paperclip className="w-5 h-5" />
+          </Button>
+          <Button type="submit" size="icon" disabled={isLoading} aria-label="Send message" className="bg-accent hover:bg-accent/90">
+            {isLoading ? (
+              <Icons.Spinner className="w-5 h-5 animate-spin" />
+            ) : (
+              <Icons.Send className="w-5 h-5" />
+            )}
+          </Button>
+        </div>
       </div>
     </form>
   );
