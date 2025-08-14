@@ -9,6 +9,13 @@ import { useToast } from '@/hooks/use-toast';
 import { Icons } from '@/components/icons';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card } from '../ui/card';
+import { Button } from '../ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const initialMessages: Message[] = [
   {
@@ -22,6 +29,10 @@ export default function ChatLayout() {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  const handleNewSession = () => {
+    setMessages(initialMessages);
+  };
 
   const handleSendMessage = async (text: string, files: File[]) => {
     if (isLoading) return;
@@ -84,9 +95,24 @@ export default function ChatLayout() {
 
   return (
     <Card className="flex flex-col h-[calc(100dvh-4rem)] w-full max-w-4xl m-4 shadow-2xl rounded-2xl">
-      <header className="flex items-center p-4 border-b">
-        <Icons.Stethoscope className="w-8 h-8 mr-3 text-primary" />
-        <h1 className="text-2xl font-bold font-headline">Dr. Second Opinion</h1>
+      <header className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center">
+          <Icons.Stethoscope className="w-8 h-8 mr-3 text-primary" />
+          <h1 className="text-2xl font-bold font-headline">Dr. Second Opinion</h1>
+        </div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon" onClick={handleNewSession} disabled={isLoading}>
+                <Icons.Eraser className="w-5 h-5" />
+                <span className="sr-only">New Session</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>New Session</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </header>
       <div className="flex-1 overflow-hidden">
         <ChatMessages messages={messages} isLoading={isLoading} />

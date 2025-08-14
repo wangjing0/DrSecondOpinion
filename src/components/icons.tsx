@@ -7,6 +7,7 @@ import {
   Bot,
   Trash2,
   Loader2 as Spinner,
+  Eraser,
 } from 'lucide-react';
 
 export const Icons = {
@@ -18,4 +19,5 @@ export const Icons = {
   Send,
   Trash: Trash2,
   Spinner,
+  Eraser,
 };
