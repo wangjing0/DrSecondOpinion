@@ -106,9 +106,10 @@ export default function ChatLayout() {
     }
 
     setIsLoading(true);
-
-    const currentMessages = [...messages];
     
+    // Keep a snapshot of the history before the new message
+    const historyForBackend = [...messages];
+
     try {
         const attachmentPromises: Promise<Attachment | Attachment[]>[] = files.map(file => {
             if (file.type === 'application/pdf') {
@@ -138,7 +139,7 @@ export default function ChatLayout() {
         processedAttachments.forEach(attachment => {
             formData.append('documents', attachment.data);
         });
-        formData.append('history', JSON.stringify(currentMessages));
+        formData.append('history', JSON.stringify(historyForBackend));
         formData.append('model', selectedModel);
 
         const result = await submitQuery(formData);
@@ -160,8 +161,7 @@ export default function ChatLayout() {
         console.error("Error processing files:", error);
         const errorMessageContent = 'An unexpected error occurred while processing files. Please try again.';
         const errorMessage: Message = { id: (Date.now() + 2).toString(), role: 'ai', content: errorMessageContent };
-        // Remove the user message and add an error message.
-        setMessages(prev => [...prev.slice(0, -1), errorMessage]);
+        setMessages(prev => [...prev, errorMessage]);
         toast({
             title: 'Error',
             description: errorMessageContent,
