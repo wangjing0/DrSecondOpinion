@@ -35,7 +35,7 @@ const initialMessages: Message[] = [
   {
     id: '1',
     role: 'ai',
-    content: "欢迎来到医见。我在这里为您提供有关医疗问题和文件的AI支持分析。请问吧!",
+    content: "欢迎来到医见。我在这里为您提供有关医疗问题和文件的AI支持分析。请问吧! Upload images and ask me questions.",
   },
 ];
 
